@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Trash2, MailOpen, Mail } from 'lucide-react';
+import { Trash2, MailOpen, Mail, Send } from 'lucide-react';
 import ContactAPI from '../../api/contact.js';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -8,6 +8,8 @@ export default function Contacts() {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
+  const [replyMessage, setReplyMessage] = useState('');
+  const [sending, setSending] = useState(false);
 
   const fetchContacts = () => {
     ContactAPI.getAll()
@@ -19,6 +21,7 @@ export default function Contacts() {
 
   const handleOpen = async (contact) => {
     setSelected(contact);
+    setReplyMessage('');
     if (!contact.read) {
       try {
         await ContactAPI.markRead(contact.id);
@@ -28,6 +31,20 @@ export default function Contacts() {
       } catch {
         // silently fail
       }
+    }
+  };
+
+  const handleReply = async () => {
+    if (!replyMessage.trim()) return toast.error('Write a reply first.');
+    setSending(true);
+    try {
+      await ContactAPI.reply(selected.id, { replyMessage });
+      toast.success(`Reply sent to ${selected.email}`);
+      setReplyMessage('');
+    } catch {
+      toast.error('Failed to send reply.');
+    } finally {
+      setSending(false);
     }
   };
 
@@ -92,26 +109,20 @@ export default function Contacts() {
           )}
         </div>
 
-        {/* Detail */}
-        <div className="col-span-2 bg-gray-900 border border-gray-800 rounded-xl p-6">
+        {/* Detail + Reply */}
+        <div className="col-span-2 flex flex-col gap-4">
           {selected ? (
-            <div>
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <h2 className="text-lg font-semibold text-white">{selected.name}</h2>
-                  <p className="text-sm text-indigo-400 mt-0.5">{selected.email}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {format(new Date(selected.created_at), 'PPP p')}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <a
-                    href={`mailto:${selected.email}`}
-                    className="flex items-center gap-2 text-sm bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg transition-all"
-                  >
-                    <Mail size={14} />
-                    Reply
-                  </a>
+            <>
+              {/* Message */}
+              <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <h2 className="text-lg font-semibold text-white">{selected.name}</h2>
+                    <p className="text-sm text-indigo-400 mt-0.5">{selected.email}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {format(new Date(selected.created_at), 'PPP p')}
+                    </p>
+                  </div>
                   <button
                     onClick={() => handleDelete(selected.id)}
                     className="flex items-center gap-2 text-sm bg-gray-800 hover:bg-red-500/20 text-gray-400 hover:text-red-400 px-3 py-2 rounded-lg transition-all"
@@ -119,18 +130,41 @@ export default function Contacts() {
                     <Trash2 size={14} />
                   </button>
                 </div>
+                <div className="bg-gray-800 rounded-xl p-5">
+                  <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">
+                    {selected.message}
+                  </p>
+                </div>
               </div>
-              <div className="bg-gray-800 rounded-xl p-5">
-                <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">
-                  {selected.message}
-                </p>
+
+              {/* Reply Box */}
+              <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                  <Send size={14} className="text-indigo-400" />
+                  Reply to {selected.name}
+                </h3>
+                <textarea
+                  rows={5}
+                  value={replyMessage}
+                  onChange={(e) => setReplyMessage(e.target.value)}
+                  placeholder={`Write your reply to ${selected.name}...`}
+                  className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 resize-none transition-colors mb-3"
+                />
+                <button
+                  onClick={handleReply}
+                  disabled={sending}
+                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-all"
+                >
+                  <Send size={14} />
+                  {sending ? 'Sending...' : `Send Reply to ${selected.email}`}
+                </button>
               </div>
-            </div>
+            </>
           ) : (
-            <div className="h-full flex items-center justify-center text-center">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl h-full flex items-center justify-center text-center p-12">
               <div>
                 <MailOpen size={32} className="text-gray-700 mx-auto mb-3" />
-                <p className="text-gray-500 text-sm">Select a message to read it</p>
+                <p className="text-gray-500 text-sm">Select a message to read and reply</p>
               </div>
             </div>
           )}

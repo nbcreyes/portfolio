@@ -4,12 +4,13 @@ import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Public — visitor sends message
+// Public
 router.post('/', ContactController.send);
 
-// Admin — manage messages
+// Admin
 router.get('/', authMiddleware, ContactController.getAll);
 router.put('/:id/read', authMiddleware, ContactController.markRead);
+router.post('/:id/reply', authMiddleware, ContactController.reply);
 router.delete('/:id', authMiddleware, ContactController.delete);
 
 export default router;
