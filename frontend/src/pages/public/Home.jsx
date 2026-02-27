@@ -70,10 +70,10 @@ export default function Home() {
             </Link>
           </div>
           <div className="flex items-center gap-4 mt-8 justify-center md:justify-start">
-            <a href="https://github.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <a href="https://github.com/nbcreyes" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
               <Github size={20} />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <a href="https://www.linkedin.com/in/neil-benedict-reyes-133a07338/" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
               <Linkedin size={20} />
             </a>
           </div>
@@ -188,13 +188,13 @@ export default function Home() {
               </p>
               <div className="space-y-4">
                 <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
-                  <Mail size={16} className="text-indigo-500" /> your@email.com
+                  <Mail size={16} className="text-indigo-500" /> neilbcreyes@gmail.com
                 </div>
                 <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
-                  <Github size={16} className="text-indigo-500" /> github.com/yourusername
+                  <Github size={16} className="text-indigo-500" /> github.com/nbcreyes
                 </div>
                 <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
-                  <Linkedin size={16} className="text-indigo-500" /> linkedin.com/in/yourusername
+                  <Linkedin size={16} className="text-indigo-500" /> linkedin.com/in/neil-benedict-reyes-133a07338
                 </div>
               </div>
             </div>

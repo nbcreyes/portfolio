@@ -9,14 +9,11 @@ export default function Footer() {
           &copy; {new Date().getFullYear()} Neil Benedict Reyes. All rights reserved.
         </p>
         <div className="flex items-center gap-4">
-          <a href="https://github.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+          <a href="https://github.com/nbcreyes" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
             <Github size={18} />
           </a>
-          <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+          <a href="https://www.linkedin.com/in/neil-benedict-reyes-133a07338/" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
             <Linkedin size={18} />
-          </a>
-          <a href="https://twitter.com" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-            <Twitter size={18} />
           </a>
         </div>
         <div className="flex items-center gap-4 text-sm text-gray-400">
