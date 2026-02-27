@@ -1,20 +1,13 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const EmailService = {
-  // Notify you when someone contacts you
   async sendContactNotification({ name, email, message }) {
-    await transporter.sendMail({
-      from: `"Portfolio Contact" <${process.env.GMAIL_USER}>`,
+    await resend.emails.send({
+      from: 'Portfolio Contact <onboarding@resend.dev>',
       to: process.env.GMAIL_USER,
       subject: `New message from ${name}`,
       html: `
@@ -34,12 +27,11 @@ const EmailService = {
     });
   },
 
-  // Send your reply to the visitor
   async sendReply({ to, name, replyMessage }) {
-    await transporter.sendMail({
-      from: `"Neil Benedict Reyes" <${process.env.GMAIL_USER}>`,
+    await resend.emails.send({
+      from: 'Neil Benedict Reyes <onboarding@resend.dev>',
       to,
-      subject: `Re: Your message to Neil Benedict Reyes`,
+      subject: 'Re: Your message to Neil Benedict Reyes',
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #4f46e5;">Hey ${name},</h2>
