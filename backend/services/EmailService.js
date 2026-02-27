@@ -2,11 +2,19 @@ import { Resend } from 'resend';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy initialization — only created when first used
+let resendClient = null;
+
+const getResend = () => {
+  if (!resendClient) {
+    resendClient = new Resend(process.env.RESEND_API_KEY);
+  }
+  return resendClient;
+};
 
 const EmailService = {
   async sendContactNotification({ name, email, message }) {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: 'Portfolio Contact <onboarding@resend.dev>',
       to: process.env.GMAIL_USER,
       subject: `New message from ${name}`,
@@ -28,7 +36,7 @@ const EmailService = {
   },
 
   async sendReply({ to, name, replyMessage }) {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: 'Neil Benedict Reyes <onboarding@resend.dev>',
       to,
       subject: 'Re: Your message to Neil Benedict Reyes',
