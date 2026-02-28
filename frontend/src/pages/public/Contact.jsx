@@ -63,7 +63,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">GitHub</p>
-                  <a href="https://github.com" target="_blank" rel="noreferrer" className="text-sm text-indigo-500 hover:text-indigo-600">
+                  <a href="https://github.com/nbcreyes" target="_blank" rel="noreferrer" className="text-sm text-indigo-500 hover:text-indigo-600">
                     github.com/nbcreyes
                   </a>
                 </div>
@@ -74,7 +74,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">LinkedIn</p>
-                  <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-sm text-indigo-500 hover:text-indigo-600">
+                  <a href="https://www.linkedin.com/in/neil-benedict-reyes-133a07338" target="_blank" rel="noreferrer" className="text-sm text-indigo-500 hover:text-indigo-600">
                     linkedin.com/in/neil-benedict-reyes-133a07338
                   </a>
                 </div>
