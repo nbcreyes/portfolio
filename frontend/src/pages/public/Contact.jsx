@@ -45,7 +45,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">Email</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">your@email.com</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">neilbcreyes@gmail.com</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -64,7 +64,7 @@ export default function Contact() {
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">GitHub</p>
                   <a href="https://github.com" target="_blank" rel="noreferrer" className="text-sm text-indigo-500 hover:text-indigo-600">
-                    github.com/yourusername
+                    github.com/nbcreyes
                   </a>
                 </div>
               </div>
@@ -75,7 +75,7 @@ export default function Contact() {
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">LinkedIn</p>
                   <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-sm text-indigo-500 hover:text-indigo-600">
-                    linkedin.com/in/yourusername
+                    linkedin.com/in/neil-benedict-reyes-133a07338
                   </a>
                 </div>
               </div>
