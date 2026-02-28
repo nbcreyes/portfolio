@@ -36,7 +36,12 @@ export default function Editor() {
           ...post,
           tags: post.tags ? post.tags.join(", ") : "",
           scheduled_at: post.scheduled_at
-            ? new Date(post.scheduled_at).toISOString().slice(0, 16)
+            ? new Date(
+                new Date(post.scheduled_at).getTime() -
+                  new Date().getTimezoneOffset() * 60000,
+              )
+                .toISOString()
+                .slice(0, 16)
             : "",
         });
       });
@@ -79,7 +84,9 @@ export default function Editor() {
           .split(",")
           .map((t) => t.trim())
           .filter(Boolean),
-        scheduled_at: form.scheduled_at || null,
+        scheduled_at: form.scheduled_at
+          ? new Date(form.scheduled_at).toISOString()
+          : null,
       };
       if (isEditing) {
         await PostsAPI.update(id, payload);
