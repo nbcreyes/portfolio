@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Sparkles, Save, Send, Clock } from 'lucide-react';
-import PostsAPI from '../../api/posts.js';
-import AIAPI from '../../api/ai.js';
-import toast from 'react-hot-toast';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Sparkles, Save, Send, Clock } from "lucide-react";
+import PostsAPI from "../../api/posts.js";
+import AIAPI from "../../api/ai.js";
+import toast from "react-hot-toast";
 
 const defaultForm = {
-  title: '',
-  body: '',
-  excerpt: '',
-  status: 'draft',
-  tags: '',
-  cover_url: '',
-  scheduled_at: '',
+  title: "",
+  body: "",
+  excerpt: "",
+  status: "draft",
+  tags: "",
+  cover_url: "",
+  scheduled_at: "",
   ai_generated: false,
 };
 
@@ -22,9 +22,9 @@ export default function Editor() {
   const isEditing = Boolean(id);
 
   const [form, setForm] = useState(defaultForm);
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [aiTone, setAiTone] = useState('professional');
-  const [aiLength, setAiLength] = useState('medium');
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiTone, setAiTone] = useState("professional");
+  const [aiLength, setAiLength] = useState("medium");
   const [aiLoading, setAiLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -34,17 +34,17 @@ export default function Editor() {
         const post = res.data;
         setForm({
           ...post,
-          tags: post.tags ? post.tags.join(', ') : '',
+          tags: post.tags ? post.tags.join(", ") : "",
           scheduled_at: post.scheduled_at
             ? new Date(post.scheduled_at).toISOString().slice(0, 16)
-            : '',
+            : "",
         });
       });
     }
   }, [id]);
 
   const handleAIGenerate = async () => {
-    if (!aiPrompt.trim()) return toast.error('Enter a topic first.');
+    if (!aiPrompt.trim()) return toast.error("Enter a topic first.");
     setAiLoading(true);
     try {
       const res = await AIAPI.generateDraft({
@@ -57,37 +57,40 @@ export default function Editor() {
         title: res.data.title,
         body: res.data.body,
         excerpt: res.data.excerpt,
-        tags: res.data.tags ? res.data.tags.join(', ') : '',
+        tags: res.data.tags ? res.data.tags.join(", ") : "",
         ai_generated: true,
       }));
-      toast.success('AI draft generated.');
+      toast.success("AI draft generated.");
     } catch {
-      toast.error('AI generation failed. Check your Groq API key.');
+      toast.error("AI generation failed. Check your Groq API key.");
     } finally {
       setAiLoading(false);
     }
   };
 
   const handleSave = async (status = form.status) => {
-    if (!form.title.trim()) return toast.error('Title is required.');
+    if (!form.title.trim()) return toast.error("Title is required.");
     setSaving(true);
     try {
       const payload = {
         ...form,
         status,
-        tags: form.tags.split(',').map((t) => t.trim()).filter(Boolean),
+        tags: form.tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
         scheduled_at: form.scheduled_at || null,
       };
       if (isEditing) {
         await PostsAPI.update(id, payload);
-        toast.success('Post updated.');
+        toast.success("Post updated.");
       } else {
         await PostsAPI.create(payload);
-        toast.success('Post created.');
+        toast.success("Post created.");
       }
-      navigate('/admin/posts');
+      navigate("/admin/posts");
     } catch {
-      toast.error('Failed to save post.');
+      toast.error("Failed to save post.");
     } finally {
       setSaving(false);
     }
@@ -98,19 +101,19 @@ export default function Editor() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-white">
-          {isEditing ? 'Edit Post' : 'New Post'}
+          {isEditing ? "Edit Post" : "New Post"}
         </h1>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => handleSave('draft')}
+            onClick={() => handleSave(form.status)}
             disabled={saving}
             className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-all"
           >
             <Save size={15} />
-            Save Draft
+            Save
           </button>
           <button
-            onClick={() => handleSave('published')}
+            onClick={() => handleSave("published")}
             disabled={saving}
             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-all"
           >
@@ -152,7 +155,9 @@ export default function Editor() {
           <div className="bg-gray-900 border border-indigo-500/30 rounded-xl overflow-hidden">
             <div className="px-5 py-3.5 border-b border-gray-800 flex items-center gap-2">
               <Sparkles size={15} className="text-indigo-400" />
-              <span className="text-sm font-semibold text-white">AI Draft Generator</span>
+              <span className="text-sm font-semibold text-white">
+                AI Draft Generator
+              </span>
             </div>
             <div className="p-4 space-y-3">
               <textarea
@@ -164,7 +169,9 @@ export default function Editor() {
               />
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Tone</label>
+                  <label className="text-xs text-gray-500 mb-1 block">
+                    Tone
+                  </label>
                   <select
                     value={aiTone}
                     onChange={(e) => setAiTone(e.target.value)}
@@ -177,7 +184,9 @@ export default function Editor() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Length</label>
+                  <label className="text-xs text-gray-500 mb-1 block">
+                    Length
+                  </label>
                   <select
                     value={aiLength}
                     onChange={(e) => setAiLength(e.target.value)}
@@ -195,7 +204,7 @@ export default function Editor() {
                 className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-sm font-medium py-2.5 rounded-lg transition-all flex items-center justify-center gap-2"
               >
                 <Sparkles size={14} />
-                {aiLoading ? 'Generating...' : 'Generate Draft'}
+                {aiLoading ? "Generating..." : "Generate Draft"}
               </button>
             </div>
           </div>
@@ -203,11 +212,15 @@ export default function Editor() {
           {/* Post Settings */}
           <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
             <div className="px-5 py-3.5 border-b border-gray-800">
-              <span className="text-sm font-semibold text-white">Post Settings</span>
+              <span className="text-sm font-semibold text-white">
+                Post Settings
+              </span>
             </div>
             <div className="p-4 space-y-4">
               <div>
-                <label className="text-xs text-gray-500 mb-1.5 block">Status</label>
+                <label className="text-xs text-gray-500 mb-1.5 block">
+                  Status
+                </label>
                 <select
                   value={form.status}
                   onChange={(e) => setForm({ ...form, status: e.target.value })}
@@ -219,7 +232,9 @@ export default function Editor() {
                 </select>
               </div>
               <div>
-                <label className="text-xs text-gray-500 mb-1.5 block">Tags (comma separated)</label>
+                <label className="text-xs text-gray-500 mb-1.5 block">
+                  Tags (comma separated)
+                </label>
                 <input
                   type="text"
                   placeholder="react, node, tutorial"
@@ -229,16 +244,20 @@ export default function Editor() {
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-500 mb-1.5 block">Cover Image URL</label>
+                <label className="text-xs text-gray-500 mb-1.5 block">
+                  Cover Image URL
+                </label>
                 <input
                   type="text"
                   placeholder="https://..."
                   value={form.cover_url}
-                  onChange={(e) => setForm({ ...form, cover_url: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, cover_url: e.target.value })
+                  }
                   className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none"
                 />
               </div>
-              {form.status === 'scheduled' && (
+              {form.status === "scheduled" && (
                 <div>
                   <label className="text-xs text-gray-500 mb-1.5 flex items-center gap-1.5">
                     <Clock size={11} /> Schedule Date and Time
@@ -246,7 +265,9 @@ export default function Editor() {
                   <input
                     type="datetime-local"
                     value={form.scheduled_at}
-                    onChange={(e) => setForm({ ...form, scheduled_at: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, scheduled_at: e.target.value })
+                    }
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none"
                   />
                 </div>
