@@ -1,7 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext.jsx';
 import { Sun, Moon, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -13,65 +14,103 @@ const navLinks = [
 export default function Navbar() {
   const { dark, toggle } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 30);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => { setMenuOpen(false); }, [location]);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
-      <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="text-xl font-black tracking-tight text-gray-900 dark:text-white">
-          NB<span className="text-indigo-500">.</span>
-        </Link>
+    <>
+      <motion.nav
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? 'dark:bg-gray-950/80 bg-white/80 backdrop-blur-2xl border-b dark:border-white/5 border-gray-200/50 shadow-lg shadow-black/5'
+            : 'bg-transparent'
+        }`}
+      >
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link to="/" className="text-xl font-bold tracking-tight dark:text-white text-gray-900" style={{ fontFamily: 'Clash Display, sans-serif' }}>
+            NBR<span className="gradient-text">.</span>
+          </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map(({ to, label }) => (
-            <Link
-              key={to}
-              to={to}
-              className={`text-sm font-medium transition-colors ${
-                location.pathname === to
-                  ? 'text-indigo-500'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-              }`}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map(({ to, label }) => {
+              const active = location.pathname === to;
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  className={`relative px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    active
+                      ? 'text-cyan-500 dark:text-cyan-400'
+                      : 'dark:text-gray-400 text-gray-500 hover:dark:text-white hover:text-gray-900 hover:dark:bg-white/5 hover:bg-gray-100'
+                  }`}
+                >
+                  {label}
+                  {active && (
+                    <motion.div
+                      layoutId="nav-indicator"
+                      className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-cyan-500 rounded-full"
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggle}
+              className="p-2.5 rounded-xl dark:text-gray-400 text-gray-500 hover:dark:text-white hover:text-gray-900 hover:dark:bg-white/5 hover:bg-gray-100 transition-all"
             >
-              {label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={toggle}
-            className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
-          >
-            {dark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400"
-          >
-            {menuOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div className="md:hidden px-6 pb-4 flex flex-col gap-3 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
-          {navLinks.map(({ to, label }) => (
-            <Link
-              key={to}
-              to={to}
-              onClick={() => setMenuOpen(false)}
-              className="text-sm font-medium text-gray-600 dark:text-gray-400 py-2"
+              {dark ? <Sun size={17} /> : <Moon size={17} />}
+            </button>
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden p-2.5 rounded-xl dark:text-gray-400 text-gray-500 hover:dark:bg-white/5 hover:bg-gray-100 transition-all"
             >
-              {label}
-            </Link>
-          ))}
+              {menuOpen ? <X size={17} /> : <Menu size={17} />}
+            </button>
+          </div>
         </div>
-      )}
-    </nav>
+      </motion.nav>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-16 inset-x-0 z-40 dark:bg-gray-950/95 bg-white/95 backdrop-blur-2xl border-b dark:border-white/5 border-gray-200/50 md:hidden"
+          >
+            <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-1">
+              {navLinks.map(({ to, label }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className={`px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                    location.pathname === to
+                      ? 'bg-cyan-500/10 text-cyan-500'
+                      : 'dark:text-gray-400 text-gray-600 hover:dark:bg-white/5 hover:bg-gray-50'
+                  }`}
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
